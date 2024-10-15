@@ -3,6 +3,7 @@
     "summary":"test module",
     "version":"17.0.0.0.0",
     "license":"OEEL-1",
-    "depends":{"crm"},
+    "depends":["crm"],
     "data": [],
+    "application":True
 }
