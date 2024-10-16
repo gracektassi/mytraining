@@ -5,3 +5,4 @@ class RealEstate(models.Model):
     _description="Test model"
     name=fields.Char(default="House",required=True)
     price=fields.Float()
+    
