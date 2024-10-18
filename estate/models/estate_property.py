@@ -1,6 +1,10 @@
 from odoo import fields
 from odoo import models
 
+
+def _default_date_availability(self):
+        return fields.Date.context_today(self) + relativedelta(months=3)
+
 class EstateProperty(models.Model):
     _name="estate.property"
     _description="Test model prop"
@@ -8,12 +12,11 @@ class EstateProperty(models.Model):
     description = fields.Text("Description")
     postcode = fields.Char("Postcode")
 
-    def _default_date_availability(self):
-        return fields.Date.today()
+
     
     date_availability = fields.Date("Available From", default=_default_date_availability, copy=False)
     expected_price = fields.Float("Expected Price", required=True)
-    selling_price = fields.Float("Selling Price", copy=False, readonly=True)
+    selling_price = fields.Float("Selling Price", copy=False, readonly=True,default=200)
     bedrooms = fields.Integer("Bedrooms", default=2)
     living_area = fields.Integer("Living Area (sqm)")
     facades = fields.Integer("Facades")
