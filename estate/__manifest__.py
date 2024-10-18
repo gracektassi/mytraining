@@ -6,10 +6,10 @@
     "depends":["base"],
     "data": [
         "security/res_groups.xml",
-        "security/ir.model.access.csv"
+        "security/ir.model.access.csv",
+        "views/estate_menus.xml",
+        "views/estate_property_views.xml"
     ],
-    "demo":[
-    "demo/demo.xml"
-    ],
+
     "application":True
 }

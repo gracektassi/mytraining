@@ -1,9 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
 <odoo>
 
  <data>
     <record id="house_1" model="estate.property">
        <field name="name">House number 1 </field>
-       <field name="price">1000 </field>
+       <field name="expected_price">1000 </field>
 
     </record>
 
@@ -12,4 +15,4 @@
 
 
 
-</odoo>
+</odoo> -->
