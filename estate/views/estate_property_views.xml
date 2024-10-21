@@ -13,7 +13,7 @@
                 <field name="postcode"/>
                 <field name="expected_price"/>
                 <field name="bedrooms"/>
-                
+                <field name="tag_ids"  options="{'color_field': 'color'}"/>
                 <field name="facades"/>
                 <field name="garage"/>
                 <field name="garden"/>
@@ -38,12 +38,11 @@
                         <h1>
                             <field name="name"/>
                         </h1>
-                       
+                       <field name="tag_ids"  options="{'color_field': 'color'}"/>   
                     </div>
                     <group>
                         <group>
                             <field name="user_id"/>
-                            <field name="buyer_id"/>
                             <field name="property_type_id"/>
                             <field name="postcode"/>
                             <field name="date_availability"/>
