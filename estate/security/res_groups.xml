@@ -6,4 +6,9 @@
 
   </record>
 
+ <record id="estate_type_manager" model="res.groups">
+  
+     <field name="name">Estate Property Manager </field>
+
+  </record>
 </odoo>
