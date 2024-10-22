@@ -1,7 +1,9 @@
+from dateutil.relativedelta import relativedelta
 from odoo import api
 from odoo import fields
 from odoo import models
-from dateutil.relativedelta import relativedelta
+from odoo.exceptions import UserError, ValidationError
+from odoo.tools import float_compare, float_is_zero
 
 
 def _default_date_availability(self):
@@ -73,3 +75,35 @@ class EstateProperty(models.Model):
     def _compute_best_offer(self):
         for prop in self:
             prop.best_price = max(prop.offer_ids.mapped("price")) if prop.offer_ids else 0.0
+
+    @api.onchange("garden")
+    def _onchange_garden(self):
+         for estate in self:
+            if not estate.garden:
+                 estate.garden_area=0
+
+
+    
+    @api.onchange("date_availability")
+    def _onchange_date_availability(self):
+        for estate in self:
+           return {
+         "warning": {
+             "title": "Warning",
+             "message": "What is this?"
+                        }
+            }
+
+
+
+    @api.constrains("expected_price", "selling_price")
+    def _check_price_difference(self):
+        for prop in self:
+            if (
+                not float_is_zero(prop.selling_price, precision_rounding=0.01)
+                and float_compare(prop.selling_price, prop.expected_price * 90.0 / 100.0, precision_rounding=0.01) < 0
+            ):
+                raise ValidationError(
+                    "The selling price must be at least 90% of the expected price! "
+                    + "You must reduce the expected price if you want to accept this offer."
+                )

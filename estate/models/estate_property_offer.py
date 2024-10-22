@@ -6,7 +6,7 @@ from odoo.exceptions import UserError
 from odoo.tools import float_compare
 
 
-class EstatePropertyOffer(models.Model):
+class EstateOffer(models.Model):
 
 
     _name = "estate.property.offer"
@@ -69,7 +69,7 @@ class EstatePropertyOffer(models.Model):
     
     def action_accept(self):
         if "accepted" in self.mapped("property_id.offer_ids.state"):
-            raise UserError("An offer as already been accepted.")
+            raise UserError("Error: An offer has already been accepted.")
         self.write(
             {
                 "state": "accepted",
@@ -90,3 +90,8 @@ class EstatePropertyOffer(models.Model):
             }
         )
 
+    @api.onchange("date_deadline")
+    def _onchange_date_deadline(self):
+        return {
+       'warning': {'title': "Warning", 'message': "What is this?", 'type': 'notification'},
+        }
