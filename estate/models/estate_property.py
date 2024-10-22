@@ -1,3 +1,4 @@
+from odoo import api
 from odoo import fields
 from odoo import models
 from dateutil.relativedelta import relativedelta
@@ -11,8 +12,7 @@ class EstateProperty(models.Model):
     _description="Test model prop"
     name = fields.Char("Title", required=True)
     description = fields.Text("Description")
-    postcode = fields.Char("Postcode")
-    User_Id = fields.Many2one("res.users", string="Seller")  
+    postcode = fields.Char("Postcode") 
     date_availability = fields.Date("Available From", default=_default_date_availability, copy=False)
     expected_price = fields.Float("Expected Price", required=True)
     selling_price = fields.Float("Selling Price", copy=False, readonly=True,default=200)
@@ -53,3 +53,23 @@ class EstateProperty(models.Model):
     tag_ids = fields.Many2many("estate.property.tag", string="Tags")
     offer_ids = fields.One2many("estate.property.offer", "property_id", string="Offers")
 
+    total_area = fields.Integer(
+        "Total Area ",
+        compute="_compute_total_area",
+        help="Total area  = the living area + the garden area",
+    )
+
+
+    best_offer = fields.Float("Best Offer", compute="_compute_best_offer", help="Best offer received")
+
+
+    @api.depends("living_area", "garden_area")
+    def _compute_total_area(self):
+        for property in self:
+            property.total_area = property.living_area + property.garden_area
+
+
+    @api.depends("offer_ids.price")
+    def _compute_best_offer(self):
+        for prop in self:
+            prop.best_price = max(prop.offer_ids.mapped("price")) if prop.offer_ids else 0.0

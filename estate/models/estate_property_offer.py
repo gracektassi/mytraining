@@ -12,9 +12,7 @@ class EstatePropertyOffer(models.Model):
     _name = "estate.property.offer"
     _description = "Real Estate Property Offer"
     _order = "price desc"
-    _sql_constraints = [
-        ("check_price", "CHECK(price > 0)", "The price must be strictly positive"),
-    ]
+   
 
    
     price = fields.Float("Price", required=True)
@@ -39,11 +37,34 @@ class EstatePropertyOffer(models.Model):
         "estate.property.type", related="property_id.property_type_id", string="Property Type", store=True
     )
 
-   
-    date_deadline = fields.Date(string="Deadline", inverse="_inverse_date_deadline")
+    
+    date_deadline = fields.Date(string="Deadline", compute="_compute_date_deadline", inverse="_inverse_date_deadline")
+
+  
+    @api.depends( "validity")
+    def _compute_date_deadline(self):
+        for offer in self:
+         #   date = offer.create_date.date() if offer.create_date else fields.Date.today()
+            offer.date_deadline = fields.Date.today() + relativedelta(days=offer.validity)
+
+    def _inverse_date_deadline(self):
+        for offer in self:
+            date = offer.create_date.date() if offer.create_date else fields.Date.today()
+            offer.validity = (offer.date_deadline - date).days
 
 
 
+    @api.model
+    def create(self, vals):
+        if vals.get("property_id") and vals.get("price"):
+            prop = self.env["estate.property"].browse(vals["property_id"])
+            
+            if prop.offer_ids:
+                max_offer = max(prop.mapped("offer_ids.price"))
+                if float_compare(vals["price"], max_offer, precision_rounding=0.01) <= 0:
+                    raise UserError("The offer must be higher than %.2f" % max_offer)
+            prop.state = "offer_received"
+        return super().create(vals)
 
     
     def action_accept(self):
