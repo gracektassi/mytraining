@@ -107,3 +107,17 @@ class EstateProperty(models.Model):
                     "The selling price must be at least 90% of the expected price! "
                     + "You must reduce the expected price if you want to accept this offer."
                 )
+
+    def action_sold(self):
+        if "canceled" in self.mapped("state"):
+            raise UserError("Canceled properties cannot be sold.")
+        return self.write({"state": "sold"})
+
+    def action_cancel(self):
+        if "sold" in self.mapped("state"):
+            raise UserError("Sold properties cannot be canceled.")
+        return self.write({"state": "canceled"})
+    def action_offer_received(self):
+        if "sold" in self.mapped("state"):
+            raise UserError("Sold unfor")
+        return self.write({"state":"offer_received"})
