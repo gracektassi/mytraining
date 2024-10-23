@@ -7,14 +7,15 @@
         <field name="model">estate.property</field>
         <field name="arch" type="xml">
             <search>
-                <field name="name"/>
-                 <field name="user_id"/>
+                <field name="name" filter_domain="[('name','ilike',self)]" />
+                <field name="user_id"/>
                 <field name="property_type_id"/>
                 <field name="postcode"/>
                 <field name="expected_price"/>
                 <field name="bedrooms"/>
                 <field name="tag_ids"  options="{'color_field': 'color'}"/>
                 <field name="facades"/>
+                <field name="living_area" filter_domain="[('living_area', '>=', self)]"/>
                 <field name="garage"/>
                 <field name="garden"/>
                 <field name="buyer_id"/>
@@ -36,9 +37,8 @@
                 <header>
                     <button name="action_sold" type="object" string="Sold1" />
                     <button name="action_offer_received" type="object" string="offer received" />  
-                    <button name="action_sold" type="object" string="Sold2" class="oe_highlight"/>
-                    <button name="action_cancel" type="object" string="Cancel"/>
-                    
+                    <button name="action_sold" type="object" string="Sold2" class="oe_highlight" invisible="state in ('sold','cancelled')"/>
+                    <button name="action_cancel" type="object" string="Cancel"/>                    
                     <field name="state" widget="statusbar" statusbar_visible="new,offer_received,offer_accepted,sold"/>
                 </header>
                 <sheet>
@@ -120,6 +120,7 @@
         <field name="name">Test Real Estate</field>
         <field name="res_model">estate.property</field>
         <field name="view_mode">tree,form,kanban</field>
+        <field name="context">{'search_default_available': 1}</field>
      </record>
 
    
