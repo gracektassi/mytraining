@@ -1,5 +1,5 @@
 
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class EstatePropertyType(models.Model):
@@ -22,3 +22,27 @@ class EstatePropertyType(models.Model):
 
     offer_count = fields.Integer(string="Offers Count")
     offer_ids = fields.Many2many("estate.property.offer", string="Offers")
+
+
+    property_count=fields.Integer(compute="_compute_property_count")
+
+    @api.depends("property_ids")
+    def _compute_property_count(self):
+        for rec in self:
+            rec.property_count=len(rec.property_ids)
+
+
+    def action_open_property_ids(self):
+
+        return {
+            "name":"Related Props",
+            "type":"ir.actions.act_window",
+            "view_mode":"tree,form",
+            "res_model":"estate.property",
+            "target":"current",
+            "domain":[("property_type_id","=",self.id)],
+            "context":{
+                "default_property_type_id":self.id
+            }
+
+        }

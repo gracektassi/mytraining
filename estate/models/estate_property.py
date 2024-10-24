@@ -12,7 +12,7 @@ def _default_date_availability(self):
 class EstateProperty(models.Model):
     _name="estate.property"
     _description="Test model prop"
-    name = fields.Char("Title", required=True)
+    _inherit="estate.mixin"
     description = fields.Text("Description")
     postcode = fields.Char("Postcode") 
     date_availability = fields.Date("Available From", default=_default_date_availability, copy=False)
@@ -78,9 +78,9 @@ class EstateProperty(models.Model):
 
     @api.onchange("garden")
     def _onchange_garden(self):
-         for estate in self:
-            if not estate.garden:
-                 estate.garden_area=0
+         
+            if not self.garden:
+                 self.garden_area=0
 
 
     
@@ -109,7 +109,7 @@ class EstateProperty(models.Model):
                 )
 
     def action_sold(self):
-        if "canceled" in self.mapped("state"):
+        if "canceled" in self.state:
             raise UserError("Canceled properties cannot be sold.")
         return self.write({"state": "sold"})
 
@@ -121,3 +121,9 @@ class EstateProperty(models.Model):
         if "sold" in self.mapped("state"):
             raise UserError("Sold unfor")
         return self.write({"state":"offer_received"})
+    
+    
+    def unlink(self):
+        if not set(self.mapped("state")) <= {"new", "canceled"}:
+            raise UserError("Error: Only new & canceled properties can be deleted.")
+        return super().unlink()
