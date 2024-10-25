@@ -13,6 +13,8 @@ class EstateProperty(models.Model):
     _name="estate.property"
     _description="Test model prop"
     _inherit="estate.mixin"
+    _inherit = ['mail.thread', 'mail.activity.mixin']   # Inherit mail.thread for chatter
+    name = fields.Char(string='Reql Estatee', required=True)
     description = fields.Text("Description")
     postcode = fields.Char("Postcode") 
     date_availability = fields.Date("Available From", default=_default_date_availability, copy=False)
@@ -65,6 +67,24 @@ class EstateProperty(models.Model):
     best_offer = fields.Float("Best Offer", compute="_compute_best_offer", help="Best offer received")
 
 
+    not_show_sold_button = fields.Boolean(compute='_compute_button_visibility')
+    not_show_offer_received_button = fields.Boolean(compute='_compute_button_visibility')
+    not_show_cancel_button = fields.Boolean(compute='_compute_button_visibility')
+    message_posted = fields.Html(string='Message Posted', compute='_compute_message_posted', store=False)
+
+    def _compute_message_posted(self):
+        for record in self:
+            record.message_posted = record.message_ids and record.message_ids[-1].body or ''
+
+
+    @api.depends('state')
+    def _compute_button_visibility(self):
+        for record in self:
+            record.not_show_sold_button = record.state not in ['new', 'offer_received']
+            record.not_show_offer_received_button = record.state == 'offer_received'
+            record.not_show_cancel_button = record.state in ['new', 'offer_received', 'offer_accepted']
+
+
     @api.depends("living_area", "garden_area")
     def _compute_total_area(self):
         for property in self:
@@ -74,7 +94,7 @@ class EstateProperty(models.Model):
     @api.depends("offer_ids.price")
     def _compute_best_offer(self):
         for prop in self:
-            prop.best_price = max(prop.offer_ids.mapped("price")) if prop.offer_ids else 0.0
+            prop.best_offer = max(prop.offer_ids.mapped("selling_price")) if prop.offer_ids else 0.0
 
     @api.onchange("garden")
     def _onchange_garden(self):
@@ -114,8 +134,7 @@ class EstateProperty(models.Model):
         return self.write({"state": "sold"})
 
     def action_cancel(self):
-        if "sold" in self.mapped("state"):
-            raise UserError("Sold properties cannot be canceled.")
+
         return self.write({"state": "canceled"})
     def action_offer_received(self):
         if "sold" in self.mapped("state"):

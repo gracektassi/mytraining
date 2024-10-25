@@ -33,14 +33,15 @@
         <field name="model">estate.property</field>
         <field name="arch" type="xml">
             <form>
-
-                <header>
-                    <button name="action_sold" type="object" string="Sold1" />
-                    <button name="action_offer_received" type="object" string="offer received" />  
-                    <button name="action_sold" type="object" string="Sold2" class="oe_highlight" invisible="state in ('sold','cancelled')"/>
-                    <button name="action_cancel" type="object" string="Cancel"/>                    
-                    <field name="state" widget="statusbar" statusbar_visible="new,offer_received,offer_accepted,sold"/>
-                </header>
+               <header>
+                     <field name="not_show_sold_button" invisible="1"/>
+                     <field name="not_show_offer_received_button" invisible="1"/>
+                     <field name="not_show_cancel_button" invisible="1"/>
+                     <button name="action_sold" type="object" string="Sold1" invisible="not_show_sold_button"/>
+                     <button name="action_offer_received" type="object" string="Offer Received" invisible="not_show_offer_received_button"/>
+                     <button name="action_cancel" type="object" string="Cancel" invisible="not_show_cancel_button"/>
+                     <field name="state" widget="statusbar" statusbar_visible="new,offer_received,offer_accepted,sold"/>
+                </header> 
                 <sheet>
                     <div class="oe_title">
                         <h1>
@@ -54,11 +55,20 @@
                             <field name="property_type_id"/>
                             <field name="postcode"/>
                             <field name="date_availability" />
+
                         </group>
                         <group>
                             <field name="expected_price"/>
                             <field name="selling_price"/>
+                            
                         </group>
+                        <div class="o_mail_thread">
+                            <field name="message_posted" widget="mail_thread"/>
+                        </div>
+                        <div class="oe_chatter">
+                                 <field name="message_follower_ids" widget="mail_followers"/>
+                                 <field name="message_ids" widget="mail_thread"/>
+                        </div>
                     </group>
                     <notebook>
                         <page string="Description" >
@@ -90,6 +100,9 @@
                             </group>
                         </page>
                     </notebook>
+
+
+
                 </sheet>
             </form>
         </field>
@@ -116,6 +129,44 @@
             </tree>
         </field>
     </record>
+
+
+
+
+
+    <record id="estate_property_view_kanban" model="ir.ui.view">
+        <field name="name">estate.property.kanban</field>
+        <field name="model">estate.property</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="property_type_id" records_draggable="0">
+                <field name="state"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div>
+                                <strong class="o_kanban_record_title">
+                                    <field name="name"/>
+                                </strong>
+                            </div>
+                            <div>
+                                Expected Price: <field name="expected_price"/>
+                            </div>
+                            <div t-if="record.state.raw_value == 'offer_received'">
+                                Best Offer: <field name="best_offer"/>
+                            </div>
+                            <div t-if="record.selling_price.raw_value">
+                                Selling Price: <field name="selling_price"/>
+                            </div>
+                            <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+
+
 
      <record id="test_record" model="ir.actions.act_window">
         <field name="name">Test Real Estate</field>
