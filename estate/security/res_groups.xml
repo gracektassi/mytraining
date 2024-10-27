@@ -11,4 +11,32 @@
      <field name="name">Estate Property Manager </field>
 
   </record>
+
+
+   <record id="email_manager" model="res.groups">
+      <field name="name">EMAILS GROUP</field>
+            
+   </record>
+
+
+
+    <record id="access_mail_thread" model="ir.model.access">
+         <field name="name">mail.thread access</field>
+         <field name="model_id" ref="mail.model_mail_thread"/>
+         <field name="group_id" ref="email_manager"/>
+         <field name="perm_read" eval="1"/>  <!-- Allow read access -->
+         <field name="perm_write" eval="1"/> <!-- Allow write access -->            <field name="perm_create" eval="1"/> <!-- Allow create access -->
+         <field name="perm_unlink" eval="0"/> <!-- Deny delete access -->
+    </record>
+
+        <!-- You may also need to add access for mail.message if required -->
+    <record id="access_mail_message" model="ir.model.access">
+         <field name="name">mail.message access</field>
+         <field name="model_id" ref="mail.model_mail_message"/>
+         <field name="group_id" ref="email_manager"/>
+         <field name="perm_read" eval="1"/>  <!-- Allow read access -->
+         <field name="perm_write" eval="1"/> <!-- Allow write access -->
+         <field name="perm_create" eval="1"/> <!-- Allow create access -->
+         <field name="perm_unlink" eval="0"/> <!-- Deny delete access -->
+    </record>
 </odoo>

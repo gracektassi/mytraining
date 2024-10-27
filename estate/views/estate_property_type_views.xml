@@ -8,6 +8,11 @@
             <form>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
+                        <button name="action_open_property_ids" type="object" class="oe_stat_button" icon="fa-list">
+                           <field name="property_count" widget="line_count" string="Num"/>
+                        </button>
+                       
+                       
                         <button name="%(estate.estate_property_offer_action)d" type="action" class="oe_stat_button" icon="fa-money">
                             <field name="offer_count" widget="statinfo" string="Offers"/>
                         </button>
