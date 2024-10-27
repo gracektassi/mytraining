@@ -65,15 +65,13 @@
                         <div class="o_mail_thread">
                             <field name="message_posted" widget="mail_thread"/>
                         </div>
-                        <div class="oe_chatter">
-                                 <field name="message_follower_ids" widget="mail_followers"/>
-                                 <field name="message_ids" widget="mail_thread"/>
-                        </div>
+                       
                     </group>
                     <notebook>
                         <page string="Description" >
                             <group>
                                 <group>
+                                    <field name="buyer_id"/>
                                     <field name="description"/>
                                     <field name="bedrooms"/>
                                     <field name="living_area"/>
@@ -99,11 +97,17 @@
                                 </group>
                             </group>
                         </page>
+
+                        
                     </notebook>
 
 
 
                 </sheet>
+                <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                </div>
             </form>
         </field>
     </record>
